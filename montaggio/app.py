@@ -173,6 +173,14 @@ def adatta_foto(src, w, h):
     """Foto intera al centro su fondo sfocato e scurito, per non tagliare mai la bottiglia."""
     from PIL import Image, ImageFilter, ImageEnhance
     im = Image.open(src).convert("RGB")
+    rapporto = (im.width / im.height) / (w / h)
+    if 0.75 <= rapporto <= 1.8:  # foto d'atmosfera: a tutto schermo, leggermente scurita
+        sc = max(w / im.width, h / im.height)
+        im = im.resize((int(im.width * sc) + 1, int(im.height * sc) + 1), Image.LANCZOS)
+        x, y = (im.width - w) // 2, (im.height - h) // 2
+        im = ImageEnhance.Brightness(im.crop((x, y, x + w, y + h))).enhance(0.72)
+        im.save(src.with_suffix(".foto.png"), format="PNG")
+        return src.with_suffix(".foto.png")
     sf = im.copy()
     sc = max(w / sf.width, h / sf.height)
     sf = sf.resize((int(sf.width * sc) + 1, int(sf.height * sc) + 1), Image.LANCZOS)
@@ -323,16 +331,20 @@ def disegna_outro(dati, w, h, logo=None):
     y += h * 0.03
     dr.rectangle([m, y, m + w * 0.05, y + 3], fill=ORO_SCURO)
     y += h * 0.05
-    f_t = _font(FONT_BOLD, h * 0.05)
-    for r in a_capo(dr, dati.get("testo", "Grazie per aver guardato"), f_t, larg):
-        dr.text((m, y), r, font=f_t, fill=CREMA)
-        y += h * 0.07
     if dati.get("titolo"):
-        y += h * 0.03
         f_p = _font(FONT_REG, h * 0.034)
         for r in a_capo(dr, dati["titolo"], f_p, larg):
             dr.text((m, y), r, font=f_p, fill=GRIGIO)
             y += h * 0.05
+    # frase finale: sempre su una sola riga, corpo ridotto finche' ci sta
+    testo = dati.get("testo", "Grazie per aver guardato")
+    max_l = w * 0.84
+    px = h * 0.05
+    f_t = _font(FONT_BOLD, px)
+    while dr.textlength(testo, font=f_t) > max_l and px > h * 0.02:
+        px *= 0.95
+        f_t = _font(FONT_BOLD, px)
+    dr.text((m, h * 0.84), testo, font=f_t, fill=CREMA)
     return img
 
 
