@@ -151,8 +151,11 @@ def clip_da_immagine(img, audio, dur, w, h, out, zoom_in=True, srt=None, af="apa
     frames = int(dur * FPS) + 1
     passo = (zmax - 1.0) / max(frames, 1)
     z = f"min(zoom+{passo:.6f},{zmax})" if zoom_in else f"if(eq(on,0),{zmax},max(zoom-{passo:.6f},1.0))"
-    vf = (f"scale={w*2}:{h*2}:force_original_aspect_ratio=increase,crop={w*2}:{h*2},"
-          f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={w}x{h}:fps={FPS}")
+    if zmax <= 1.0:  # foto ferma: nessun movimento, niente tremolio
+        vf = f"scale={w}:{h}:force_original_aspect_ratio=increase:flags=lanczos,crop={w}:{h}"
+    else:
+        vf = (f"scale={w*2}:{h*2}:force_original_aspect_ratio=increase,crop={w*2}:{h*2},"
+              f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={w}x{h}:fps={FPS}")
     if srt is not None:
         stile = "FontName=DejaVu Sans,FontSize=%d,Bold=1,PrimaryColour=&HFFFFFF&,OutlineColour=&H000000&,BorderStyle=1,Outline=3,Shadow=0,Alignment=2,MarginV=%d" % (
             13 if w > h else 9, 16 if w > h else 38)
@@ -208,7 +211,7 @@ def clip_scena(d, i, scena, w, h, sottotitoli=True):
 
     out = d / f"c{i:03}.mp4"
     clip_da_immagine(img, audio, dur, w, h, out, zoom_in=(i % 2 == 0), srt=srt,
-                     af="apad=pad_dur=0.35", zmax=(1.05 if scena.get("image_url") else 1.18))
+                     af="apad=pad_dur=0.35", zmax=(1.0 if scena.get("image_url") else 1.18))
     return out, dur
 
 
