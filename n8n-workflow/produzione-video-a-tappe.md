@@ -36,3 +36,16 @@ Parte solo da una riga con Stato = `video approvato` (lo imposti tu dopo aver gu
 - Licenza del jingle e seconda fonte foto (Pixabay): aperti.
 - La chiave X-API-Key del montaggio e scritta in chiaro in 3 nodi HTTP: meglio spostarla in una credenziale Header Auth.
 - Mai eseguito: nessuna prova reale ne caricamento fatto.
+
+## Aggiunte per avvicinarlo alla "fabbrica di video" (2026-11-13, sera)
+
+- `Controlli copione` (prima delle voci): trasforma gli apostrofi in accenti veri (perche' -> perché); si ferma se una scena con numeri non ha la fonte in "Dato con fonte"; avvisa se il titolo supera 60 caratteri o non e una domanda.
+- Avvisi nelle Note del foglio: quota di grafiche proprie fuori da 30-70% (rischio "contenuto riciclato"), video sotto 8 minuti (niente pubblicita a meta).
+- Uscita programmata alle 14:00 ora italiana (prima 17:00).
+- Due trigger programmati: ogni notte alle 2 (produzione), ogni mattina alle 8 (caricamento dei video approvati). Il workflow e inattivo: partono solo se lo attivi.
+
+### Cosa non e uguale al documento di riferimento
+- Voce: ElevenLabs v3 (scelta gia fatta) invece di Edge TTS.
+- Copione e controllo fatti con AI, argomento scelto da scaletta/radar: il copione e gia nel foglio; manca una credenziale AI.
+- Immagini generate (Flux/Cloudflare), musica Jamendo/Freesound, altri archivi (Pexels, Wikimedia, musei): non collegati; ora solo Unsplash (Pixabay ha la credenziale ma non e nel flusso).
+- Corti verticali, copertina, sottotitoli caricati su YouTube, audio a -18 dB, PC di riserva per la quota: non fatti; dipendono dal servizio sul VPS, che non ho potuto ispezionare.
