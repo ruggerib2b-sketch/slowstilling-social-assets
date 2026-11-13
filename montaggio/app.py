@@ -146,7 +146,7 @@ def scrivi_srt(path, righe):
 
 
 # ---------- montaggio ----------
-def clip_da_immagine(img, audio, dur, w, h, out, zoom_in=True, srt=None, af="apad", zmax=1.18):
+def clip_da_immagine(img, audio, dur, w, h, out, zoom_in=True, srt=None, af="apad", zmax=1.0):
     """Un'immagine ferma (con zoom lento) + un audio, per `dur` secondi."""
     frames = int(dur * FPS) + 1
     passo = (zmax - 1.0) / max(frames, 1)
@@ -211,7 +211,7 @@ def clip_scena(d, i, scena, w, h, sottotitoli=True):
 
     out = d / f"c{i:03}.mp4"
     clip_da_immagine(img, audio, dur, w, h, out, zoom_in=(i % 2 == 0), srt=srt,
-                     af="apad=pad_dur=0.35", zmax=(1.0 if scena.get("image_url") else 1.18))
+                     af="apad=pad_dur=0.35", zmax=1.0)
     return out, dur
 
 
